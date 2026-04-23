@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Clock, Users, Settings, Download, Plus, Trash2, AlertCircle, Award, Check, Cpu, Globe } from 'lucide-react';
+import { Clock, Users, Settings, Download, Plus, Trash2, AlertCircle, Award, Check, Cpu } from 'lucide-react';
 
 export default function ScheduleAutomation() {
   const [activeTab, setActiveTab] = useState('agents');
@@ -19,7 +19,6 @@ export default function ScheduleAutomation() {
   const [collapsedAgents, setCollapsedAgents] = useState({});
   const [selectionMode, setSelectionMode] = useState(null);
 
-  // --- NO INDEX & SETUP ---
   useEffect(() => {
     const metaRobots = document.createElement('meta');
     metaRobots.name = "robots";
@@ -64,11 +63,11 @@ export default function ScheduleAutomation() {
   const agentFlexibility = useMemo(() => {
     const scores = {};
     const totalPossibleSlots = projectDays * 24;
-    
+
     agents.forEach(agent => {
       let unavailableCount = 0;
       let availableCount = 0;
-      
+
       for (let day = 0; day < projectDays; day++) {
         for (let hour = 0; hour < 24; hour++) {
           const hourKey = `day${day}_hour${hour}`;
@@ -77,7 +76,7 @@ export default function ScheduleAutomation() {
           else unavailableCount++;
         }
       }
-      
+
       scores[agent.id] = {
         unavailableHours: unavailableCount,
         availableHours: availableCount,
@@ -248,13 +247,6 @@ export default function ScheduleAutomation() {
     const period = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour % 12 || 12;
     return `${displayHour}${period}`;
-  };
-
-  const getHourCategoryColor = (hour) => {
-    const category = getHourCategory(hour);
-    if (category === 'hard') return 'bg-pink-900/60 border-pink-500 text-pink-200';
-    if (category === 'prime') return 'bg-cyan-900/60 border-cyan-500 text-cyan-200';
-    return 'bg-blue-900/60 border-blue-500 text-blue-200';
   };
 
   const generateSchedule = () => {
@@ -452,135 +444,170 @@ export default function ScheduleAutomation() {
   };
 
   const tabs = [
-    { id: 'agents', label: 'AGENTS', icon: Users },
-    { id: 'flexibility', label: 'FLEX', icon: Award },
-    { id: 'project', label: 'HOOP', icon: Clock },
-    { id: 'rules', label: 'GENERATE', icon: Settings },
-    { id: 'schedule', label: 'SCHEDULE', icon: Download },
+    { id: 'agents',      label: 'AGENTS',   icon: Users },
+    { id: 'flexibility', label: 'FLEX',     icon: Award },
+    { id: 'project',     label: 'HOOP',     icon: Clock },
+    { id: 'rules',       label: 'GENERATE', icon: Settings },
+    { id: 'schedule',    label: 'SCHEDULE', icon: Download },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 font-mono text-cyan-400 p-3 sm:p-6 selection:bg-pink-500 selection:text-white">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="bg-slate-900 border-2 border-pink-500/50 shadow-[0_0_30px_rgba(236,72,153,0.3)] p-4 sm:p-8 mb-6 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20 pointer-events-none" style={{backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"4\" height=\"4\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Crect width=\"1\" height=\"1\" fill=\"%23000\"%3E%3C/rect%3E%3C/svg%3E')"}}></div>
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 relative z-10">
-            <div className="flex items-center gap-4 sm:gap-6">
-              <div className="text-4xl sm:text-6xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 via-cyan-500 to-blue-600 transform -skew-x-12">FUDASHI</div>
-              <div className="h-12 sm:h-16 w-1 bg-gradient-to-b from-pink-500 to-cyan-500 hidden sm:block"></div>
-              <div className="hidden sm:block">
-                <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-[0.2em]">PHUTURE</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  <Globe className="w-4 h-4 text-pink-500 animate-spin" style={{animationDuration: '8s'}} />
-                  <p className="text-pink-500 font-bold tracking-wider text-xs sm:text-sm uppercase">EARTH IS STILL SPINNING</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 border border-cyan-500/30 p-2 bg-slate-950/50">
-              <div className="text-right">
-                <div className="text-[10px] text-cyan-600 font-bold uppercase tracking-widest">Status</div>
-                <div className="text-xs text-cyan-400 font-bold tracking-wider animate-pulse">ONLINE</div>
-              </div>
-              <div className="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_10px_#06b6d4]"></div>
+    <div className="app">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="logo-area">
+          <div className="logo-mark">
+            <div className="lbar lbar1" />
+            <div className="lbar lbar2" />
+            <div className="lbar lbar3" />
+          </div>
+          <div className="logo-text">FUDASHI</div>
+          <div className="logo-sub">PHUTURE</div>
+        </div>
+
+        <nav className="nav-section">
+          <div className="nav-label">Navigation</div>
+          {tabs.map(tab => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`nav-item${activeTab === tab.id ? ' active' : ''}`}
+              >
+                <Icon size={14} />
+                {tab.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="avatar">F</div>
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 700 }}>FUDASHI</div>
+              <div style={{ fontSize: '10px', color: 'var(--g400)' }}>SCHEDULER v2</div>
             </div>
           </div>
         </div>
+      </aside>
 
-        {/* Navigation */}
-        <div className="bg-slate-900/80 border-b border-pink-500/30 mb-6 overflow-x-auto">
-          <div className="flex min-w-max">
-            {tabs.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 px-3 sm:px-6 py-3 font-bold text-xs sm:text-sm tracking-wider transition-all border-b-4 ${
-                    activeTab === tab.id ? 'text-white border-pink-500 bg-gradient-to-t from-pink-900/20 to-transparent' : 'text-slate-500 border-transparent hover:text-cyan-400'
-                  }`}>
-                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </button>
-              );
-            })}
+      {/* Main */}
+      <div className="main">
+        <div className="topbar">
+          <div className="topbar-title">{tabs.find(t => t.id === activeTab)?.label}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="status-dot" />
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--g300)' }}>ONLINE</span>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="bg-slate-900 border border-cyan-500/20 p-4 sm:p-8 min-h-[500px]">
-          
-          {/* AGENTS TAB */}
+        <div className="content">
+
+          {/* ── AGENTS TAB ── */}
           {activeTab === 'agents' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-pink-500 mb-2 uppercase tracking-widest">Project Start</label>
-                  <input type="date" value={projectStartDate} onChange={(e) => setProjectStartDate(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-950 border border-cyan-500/30 text-cyan-400 focus:border-pink-500 focus:outline-none" />
+            <div>
+              <div className="section">
+                <div className="section-head">
+                  <div className="section-title">Project Dates</div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-pink-500 mb-2 uppercase tracking-widest">Project End</label>
-                  <input type="date" value={projectEndDate} onChange={(e) => setProjectEndDate(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-950 border border-cyan-500/30 text-cyan-400 focus:border-pink-500 focus:outline-none" />
+                <div className="section-body">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label>Project Start</label>
+                      <input type="date" value={projectStartDate} onChange={e => setProjectStartDate(e.target.value)} />
+                    </div>
+                    <div>
+                      <label>Project End</label>
+                      <input type="date" value={projectEndDate} onChange={e => setProjectEndDate(e.target.value)} />
+                    </div>
+                  </div>
+                  {projectDays > 0 && (
+                    <div style={{ marginTop: '12px', padding: '8px 12px', background: 'var(--lime-dim)', border: '1px solid var(--lime-b)', borderRadius: '6px', fontSize: '11px', fontWeight: 700, color: 'var(--lime)' }}>
+                      📅 {projectDays} DAYS CONFIGURED
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {projectDays > 0 && (
-                <div className="text-xs text-cyan-500 font-bold uppercase p-2 bg-cyan-500/10 border border-cyan-500/30">
-                  📅 {projectDays} DAYS CONFIGURED
+              <div className="section">
+                <div className="section-head">
+                  <div className="section-title">Add Agent</div>
                 </div>
-              )}
-
-              <div className="flex flex-col sm:flex-row gap-3 p-3 bg-slate-950/50 border border-dashed border-slate-700">
-                <input type="text" value={newAgentName} onChange={(e) => setNewAgentName(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addAgent()} placeholder="ENTER AGENT ID..."
-                  className="flex-1 px-3 py-2.5 bg-slate-900 border border-slate-700 text-white placeholder-slate-600 focus:border-cyan-500 focus:outline-none uppercase text-sm" />
-                <button onClick={addAgent}
-                  className="flex items-center justify-center gap-2 px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-black font-black uppercase tracking-widest text-sm">
-                  <Plus className="w-4 h-4" /> ADD
-                </button>
+                <div className="section-body">
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="text"
+                      value={newAgentName}
+                      onChange={e => setNewAgentName(e.target.value)}
+                      onKeyPress={e => e.key === 'Enter' && addAgent()}
+                      placeholder="Enter agent name..."
+                    />
+                    <button onClick={addAgent} className="btn btn-lime" style={{ whiteSpace: 'nowrap' }}>
+                      <Plus size={12} /> ADD
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {agents.length === 0 && (
-                <div className="text-center py-12 text-slate-600">
-                  <Users className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                  <p className="font-bold uppercase tracking-wider">No agents added yet</p>
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--g500)' }}>
+                  <Users size={40} style={{ margin: '0 auto 12px', opacity: 0.3, display: 'block' }} />
+                  <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '12px' }}>No agents added yet</p>
                 </div>
               )}
 
               {agents.map(agent => {
                 const isCollapsed = collapsedAgents[agent.id];
                 return (
-                  <div key={agent.id} className="border border-slate-700 bg-slate-800/50 p-3 sm:p-4">
-                    <div className="flex flex-col gap-3 mb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
-                          <div className="font-bold text-lg text-white">{agent.name}</div>
+                  <div key={agent.id} className="agent-card">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--lime)', flexShrink: 0 }} />
+                          <div style={{ fontWeight: 700, fontSize: '14px' }}>{agent.name}</div>
                           {isCollapsed && (
-                            <span className="flex items-center gap-1 px-2 py-0.5 bg-cyan-500/10 border border-cyan-500/50 text-cyan-400 text-[10px] font-bold">
-                              <Check className="w-3 h-3" />{getAgentAvailabilityPercentage(agent.id)}%
+                            <span className="pill pill-lime">
+                              <Check size={8} style={{ marginRight: '3px' }} />
+                              {getAgentAvailabilityPercentage(agent.id)}%
                             </span>
                           )}
                         </div>
-                        <button onClick={() => removeAgent(agent.id)} className="text-slate-600 hover:text-pink-500 p-1.5">
-                          <Trash2 size={18} />
+                        <button
+                          onClick={() => removeAgent(agent.id)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--g400)', padding: '4px', lineHeight: 1 }}
+                          onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
+                          onMouseLeave={e => e.currentTarget.style.color = 'var(--g400)'}
+                        >
+                          <Trash2 size={15} />
                         </button>
                       </div>
-                      <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex items-center gap-2">
-                          <label className="text-[10px] font-bold text-cyan-500 uppercase">Target</label>
-                          <input type="number" value={agent.target || 40} onChange={(e) => updateAgentParams(agent.id, 'target', e.target.value)}
-                            className="w-14 px-2 py-1 bg-slate-900 border border-cyan-500/50 text-cyan-400 text-xs font-bold focus:outline-none" />
+
+                      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <label style={{ marginBottom: 0 }}>Target</label>
+                          <input
+                            type="number"
+                            value={agent.target || 40}
+                            onChange={e => updateAgentParams(agent.id, 'target', e.target.value)}
+                            style={{ width: '56px' }}
+                          />
                         </div>
-                        <div className="flex items-center gap-2">
-                          <label className="text-[10px] font-bold text-pink-500 uppercase">Max</label>
-                          <input type="number" value={agent.max || 40} onChange={(e) => updateAgentParams(agent.id, 'max', e.target.value)}
-                            className="w-14 px-2 py-1 bg-slate-900 border border-pink-500/50 text-pink-400 text-xs font-bold focus:outline-none" />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <label style={{ marginBottom: 0 }}>Max</label>
+                          <input
+                            type="number"
+                            value={agent.max || 40}
+                            onChange={e => updateAgentParams(agent.id, 'max', e.target.value)}
+                            style={{ width: '56px' }}
+                          />
                         </div>
-                        <button onClick={() => toggleAgentCollapse(agent.id)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase border ml-auto ${
-                            isCollapsed ? 'border-pink-500 text-pink-500' : 'bg-cyan-600 text-black border-cyan-600'
-                          }`}>
+                        <button
+                          onClick={() => toggleAgentCollapse(agent.id)}
+                          className={`btn btn-sm ${isCollapsed ? 'btn-ghost' : 'btn-lime'}`}
+                          style={{ marginLeft: 'auto' }}
+                        >
                           {isCollapsed ? 'EDIT' : 'CONFIRM'}
                         </button>
                       </div>
@@ -588,31 +615,44 @@ export default function ScheduleAutomation() {
 
                     {!isCollapsed && projectDays > 0 && (
                       <div>
-                        <p className="text-[10px] text-slate-400 mb-3 font-bold uppercase">
-                          <span className="text-cyan-400">■ AVAIL</span> / <span className="text-pink-500">■ BLOCKED</span> - TAP OR DRAG
+                        <p style={{ fontSize: '10px', color: 'var(--g400)', marginBottom: '8px', fontWeight: 600 }}>
+                          <span style={{ color: 'var(--lime)' }}>■ AVAIL</span>
+                          {' / '}
+                          <span style={{ color: 'var(--red)' }}>■ BLOCKED</span>
+                          {' — TAP OR DRAG'}
                         </p>
-                        <div className="space-y-1 max-h-[400px] overflow-y-auto">
+                        <div style={{ maxHeight: '400px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           {Array.from({ length: projectDays }).map((_, dayIndex) => (
-                            <div key={dayIndex} className="bg-slate-950 p-2 border border-slate-800">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="text-[10px] font-bold text-slate-400">{getDateForDay(dayIndex)}</div>
-                                <div className="flex gap-2">
-                                  <button onClick={() => setDayAvailability(agent.id, dayIndex, true)} className="text-[10px] text-cyan-500 hover:underline">ALL</button>
-                                  <button onClick={() => setDayAvailability(agent.id, dayIndex, false)} className="text-[10px] text-pink-500 hover:underline">NONE</button>
+                            <div key={dayIndex} style={{ background: 'var(--g900)', padding: '8px', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--g300)' }}>{getDateForDay(dayIndex)}</div>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <button onClick={() => setDayAvailability(agent.id, dayIndex, true)}
+                                    style={{ fontSize: '10px', color: 'var(--lime)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}>ALL</button>
+                                  <button onClick={() => setDayAvailability(agent.id, dayIndex, false)}
+                                    style={{ fontSize: '10px', color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}>NONE</button>
                                 </div>
                               </div>
-                              <div className="overflow-x-auto touch-pan-x" onTouchMove={(e) => handleTouchMove(agent.id, dayIndex, e)}>
-                                <div className="grid grid-cols-[repeat(24,minmax(28px,1fr))] gap-px min-w-[672px]">
+                              <div style={{ overflowX: 'auto' }} onTouchMove={e => handleTouchMove(agent.id, dayIndex, e)}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(24, minmax(28px, 1fr))', gap: '1px', minWidth: '672px' }}>
                                   {Array.from({ length: 24 }).map((_, hour) => {
                                     const isAvailable = agentAvailability[agent.id]?.[`day${dayIndex}_hour${hour}`] !== false;
                                     return (
-                                      <div key={hour} data-hour={hour}
-                                        onMouseDown={(e) => handlePointerDown(agent.id, dayIndex, hour, e)}
+                                      <div
+                                        key={hour}
+                                        data-hour={hour}
+                                        onMouseDown={e => handlePointerDown(agent.id, dayIndex, hour, e)}
                                         onMouseEnter={() => handlePointerEnter(agent.id, dayIndex, hour)}
-                                        onTouchStart={(e) => handlePointerDown(agent.id, dayIndex, hour, e)}
-                                        className={`h-8 cursor-pointer flex items-center justify-center text-[9px] font-bold select-none touch-none ${
-                                          isAvailable ? 'bg-cyan-500/20 border-r border-cyan-500/30 text-cyan-400' : 'bg-pink-500/40 border-r border-pink-500/50 text-white'
-                                        }`}>
+                                        onTouchStart={e => handlePointerDown(agent.id, dayIndex, hour, e)}
+                                        style={{
+                                          height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                                          justifyContent: 'center', fontSize: '9px', fontWeight: 700,
+                                          userSelect: 'none', touchAction: 'none', borderRadius: '2px',
+                                          background: isAvailable ? 'var(--lime-dim)' : 'rgba(255,32,64,0.25)',
+                                          color: isAvailable ? 'var(--lime)' : 'var(--red)',
+                                          borderRight: `1px solid ${isAvailable ? 'var(--lime-b)' : 'var(--red-b)'}`,
+                                        }}
+                                      >
                                         {hour}
                                       </div>
                                     );
@@ -630,46 +670,60 @@ export default function ScheduleAutomation() {
             </div>
           )}
 
-          {/* FLEXIBILITY TAB */}
+          {/* ── FLEXIBILITY TAB ── */}
           {activeTab === 'flexibility' && (
-            <div className="space-y-6">
-              <div className="p-4 bg-slate-950 border border-dashed border-cyan-500/50">
-                <h3 className="font-black text-cyan-400 text-base mb-2 uppercase tracking-widest">ALGORITHM v2.0</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  1. <span className="text-pink-500 font-bold">LIMITED</span> agents get extreme hours first.<br />
-                  2. <span className="text-cyan-400 font-bold">FLEXIBLE</span> agents fill gaps.<br />
-                  3. <span className="text-white font-bold">MAX CAP</span> is strictly enforced.
-                </p>
+            <div>
+              <div className="section">
+                <div className="section-head">
+                  <div className="section-title">Algorithm v2.0</div>
+                </div>
+                <div className="section-body">
+                  <p style={{ fontSize: '12px', color: 'var(--g300)', lineHeight: 1.7 }}>
+                    1. <span style={{ color: 'var(--orange)', fontWeight: 700 }}>LIMITED</span> agents get extreme hours first.<br />
+                    2. <span style={{ color: 'var(--lime)', fontWeight: 700 }}>FLEXIBLE</span> agents fill gaps.<br />
+                    3. <span style={{ fontWeight: 700 }}>MAX CAP</span> is strictly enforced.
+                  </p>
+                </div>
               </div>
+
               {agents.length === 0 ? (
-                <div className="text-center py-12 text-slate-600">
-                  <Award className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                  <p className="font-bold uppercase tracking-wider">No agents to analyze</p>
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--g500)' }}>
+                  <Award size={40} style={{ margin: '0 auto 12px', opacity: 0.3, display: 'block' }} />
+                  <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '12px' }}>No agents to analyze</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
                   {agents.map(agent => {
                     const stats = getAgentStats(agent.id);
                     const isLimited = stats.classification === 'limited';
                     return (
-                      <div key={agent.id} className={`p-4 border-l-4 bg-slate-800/50 relative overflow-hidden ${isLimited ? 'border-pink-500' : 'border-cyan-500'}`}>
-                        <div className="absolute top-0 right-0 p-2 opacity-10 font-black text-4xl text-white pointer-events-none">
-                          {isLimited ? 'LTD' : 'FLX'}
-                        </div>
-                        <div className="flex justify-between items-start font-black text-lg text-white mb-3 relative z-10">
-                          <span className="truncate mr-2">{agent.name}</span>
-                          <span className={`text-[10px] py-0.5 px-1.5 border shrink-0 ${isLimited ? 'text-pink-500 border-pink-500' : 'text-cyan-500 border-cyan-500'}`}>
-                            {isLimited ? '⚠️' : '⭐'}
+                      <div key={agent.id} className={`stat-card ${isLimited ? 'accent-orange' : 'accent-lime'}`}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                          <div style={{ fontWeight: 800, fontSize: '14px' }}>{agent.name}</div>
+                          <span className={`pill ${isLimited ? 'pill-orange' : 'pill-lime'}`}>
+                            {isLimited ? '⚠️ LTD' : '⭐ FLX'}
                           </span>
                         </div>
-                        <div className="space-y-1.5 text-xs font-bold relative z-10">
-                          <div className="flex justify-between text-slate-400"><span>AVAIL:</span> <span className="text-white">{stats.availableHours}H</span></div>
-                          <div className="flex justify-between text-slate-400"><span>BLOCKED:</span> <span className="text-white">{stats.unavailableHours}H</span></div>
-                          <div className="flex justify-between text-slate-400 pt-2 border-t border-slate-700"><span>TARGET:</span> <span className="text-cyan-400">{stats.target}H</span></div>
-                          <div className="flex justify-between text-slate-400"><span>MAX:</span> <span className="text-pink-500">{stats.max}H</span></div>
-                          <div className="mt-3 pt-3 border-t border-slate-600 flex justify-between text-cyan-400">
-                            <span>SCHEDULED:</span>
-                            <span className={`text-lg ${stats.scheduledHours > stats.max ? 'text-red-500' : 'text-cyan-400'}`}>{stats.scheduledHours.toFixed(1)}H</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--g300)' }}>
+                            <span>AVAIL</span><span style={{ color: '#fff', fontWeight: 700 }}>{stats.availableHours}H</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--g300)' }}>
+                            <span>BLOCKED</span><span style={{ color: '#fff', fontWeight: 700 }}>{stats.unavailableHours}H</span>
+                          </div>
+                          <div style={{ height: '1px', background: 'var(--border)', margin: '4px 0' }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--g300)' }}>
+                            <span>TARGET</span><span style={{ color: 'var(--lime)', fontWeight: 700 }}>{stats.target}H</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--g300)' }}>
+                            <span>MAX</span><span style={{ color: 'var(--orange)', fontWeight: 700 }}>{stats.max}H</span>
+                          </div>
+                          <div style={{ height: '1px', background: 'var(--border)', margin: '4px 0' }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ color: 'var(--g300)' }}>SCHEDULED</span>
+                            <span style={{ fontWeight: 800, fontSize: '16px', color: stats.scheduledHours > stats.max ? 'var(--red)' : 'var(--lime)' }}>
+                              {stats.scheduledHours.toFixed(1)}H
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -680,37 +734,69 @@ export default function ScheduleAutomation() {
             </div>
           )}
 
-          {/* HOOP TAB */}
+          {/* ── HOOP TAB ── */}
           {activeTab === 'project' && (
-            <div className="space-y-6">
-              <div className="flex flex-wrap gap-2 p-3 bg-slate-950 border border-slate-800 text-[10px] font-bold uppercase">
-                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-cyan-900/60 border border-cyan-500"></span> PRIME</div>
-                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-pink-900/60 border border-pink-500"></span> EXTREME</div>
-                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-blue-900/60 border border-blue-500"></span> STANDARD</div>
+            <div>
+              <div className="section">
+                <div className="section-head">
+                  <div className="section-title">Hour Legend</div>
+                </div>
+                <div className="section-body">
+                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '10px', height: '10px', background: 'var(--lime-dim)', border: '1px solid var(--lime-b)', borderRadius: '2px', display: 'inline-block' }} />
+                      PRIME
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '10px', height: '10px', background: 'var(--red-dim)', border: '1px solid var(--red-b)', borderRadius: '2px', display: 'inline-block' }} />
+                      EXTREME
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '10px', height: '10px', background: 'var(--orange-dim)', border: '1px solid var(--orange-b)', borderRadius: '2px', display: 'inline-block' }} />
+                      STANDARD
+                    </div>
+                  </div>
+                </div>
               </div>
+
               {projectDays === 0 ? (
-                <div className="text-center py-12 text-slate-600">
-                  <Clock className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                  <p className="font-bold uppercase tracking-wider">Set project dates first</p>
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--g500)' }}>
+                  <Clock size={40} style={{ margin: '0 auto 12px', opacity: 0.3, display: 'block' }} />
+                  <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '12px' }}>Set project dates first</p>
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[500px] overflow-y-auto">
+                <div style={{ maxHeight: '500px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {Array.from({ length: projectDays }).map((_, dayIndex) => (
-                    <div key={dayIndex} className="border border-slate-700 bg-slate-800/30 p-3">
-                      <div className="font-bold text-slate-400 mb-2 text-[10px]">{getDateForDay(dayIndex)}</div>
-                      <div className="overflow-x-auto touch-pan-x" onTouchMove={(e) => handleHOOPTouchMove(dayIndex, e)}>
-                        <div className="grid grid-cols-[repeat(24,minmax(28px,1fr))] gap-0.5 min-w-[672px]">
-                          {Array.from({ length: 24 }).map((_, h) => (
-                            <button key={h} data-hour={h}
-                              onMouseDown={(e) => handleHOOPPointerDown(dayIndex, h, e)}
-                              onMouseEnter={() => handleHOOPPointerEnter(dayIndex, h)}
-                              onTouchStart={(e) => handleHOOPPointerDown(dayIndex, h, e)}
-                              className={`h-9 text-[9px] font-bold border touch-none ${
-                                operatingHours[`day${dayIndex}_hour${h}`] ? getHourCategoryColor(h) : 'bg-slate-950 border-slate-800 text-slate-600'
-                              }`}>
-                              {h}
-                            </button>
-                          ))}
+                    <div key={dayIndex} style={{ background: 'var(--g800)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px' }}>
+                      <div style={{ fontWeight: 700, color: 'var(--g300)', marginBottom: '8px', fontSize: '10px' }}>{getDateForDay(dayIndex)}</div>
+                      <div style={{ overflowX: 'auto' }} onTouchMove={e => handleHOOPTouchMove(dayIndex, e)}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(24, minmax(28px, 1fr))', gap: '2px', minWidth: '672px' }}>
+                          {Array.from({ length: 24 }).map((_, h) => {
+                            const isOn = operatingHours[`day${dayIndex}_hour${h}`];
+                            const cat = getHourCategory(h);
+                            let bg = 'var(--g900)', color = 'var(--g600)', borderColor = 'var(--border)';
+                            if (isOn) {
+                              if (cat === 'prime')  { bg = 'var(--lime-dim)';   color = 'var(--lime)';   borderColor = 'var(--lime-b)'; }
+                              else if (cat === 'hard') { bg = 'var(--red-dim)'; color = 'var(--red)';    borderColor = 'var(--red-b)'; }
+                              else                  { bg = 'var(--orange-dim)'; color = 'var(--orange)'; borderColor = 'var(--orange-b)'; }
+                            }
+                            return (
+                              <button
+                                key={h}
+                                data-hour={h}
+                                onMouseDown={e => handleHOOPPointerDown(dayIndex, h, e)}
+                                onMouseEnter={() => handleHOOPPointerEnter(dayIndex, h)}
+                                onTouchStart={e => handleHOOPPointerDown(dayIndex, h, e)}
+                                style={{
+                                  height: '36px', fontSize: '9px', fontWeight: 700,
+                                  border: `1px solid ${borderColor}`, borderRadius: '4px',
+                                  background: bg, color, cursor: 'pointer', touchAction: 'none',
+                                }}
+                              >
+                                {h}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -720,78 +806,116 @@ export default function ScheduleAutomation() {
             </div>
           )}
 
-          {/* GENERATE TAB */}
+          {/* ── GENERATE TAB ── */}
           {activeTab === 'rules' && (
-            <div className="flex flex-col items-center justify-center min-h-[350px] text-center px-4">
-              <Cpu className="w-16 h-16 sm:w-24 sm:h-24 text-pink-500 mb-4 animate-pulse" />
-              <h3 className="text-xl sm:text-3xl font-black text-white mb-3 tracking-wider uppercase">Ready to Compile</h3>
-              <p className="max-w-md mx-auto text-cyan-400/70 mb-6 font-bold text-xs sm:text-base">
-                INITIATING SCHEDULING ALGORITHM...<br />OPTIMIZING FOR TARGET HOURS...<br />ENFORCING MAX CAPS...
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '350px', textAlign: 'center', padding: '20px' }}>
+              <Cpu size={64} style={{ color: 'var(--orange)', marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '10px', letterSpacing: '0.05em' }}>Ready to Compile</h3>
+              <p style={{ maxWidth: '400px', color: 'var(--g300)', marginBottom: '24px', fontSize: '12px', lineHeight: 1.7 }}>
+                INITIATING SCHEDULING ALGORITHM...<br />
+                OPTIMIZING FOR TARGET HOURS...<br />
+                ENFORCING MAX CAPS...
               </p>
-              <button onClick={generateSchedule} disabled={agents.length === 0 || projectDays === 0}
-                className="px-8 py-4 bg-pink-600 hover:bg-pink-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-black uppercase tracking-wider text-sm">
+              <button
+                onClick={generateSchedule}
+                disabled={agents.length === 0 || projectDays === 0}
+                className="btn btn-lime"
+                style={{ fontSize: '14px', padding: '12px 32px' }}
+              >
                 GENERATE
               </button>
               {(agents.length === 0 || projectDays === 0) && (
-                <p className="mt-4 text-xs text-slate-500 uppercase">{agents.length === 0 ? 'Add agents first' : 'Set project dates first'}</p>
+                <p style={{ marginTop: '16px', fontSize: '11px', color: 'var(--g500)', textTransform: 'uppercase' }}>
+                  {agents.length === 0 ? 'Add agents first' : 'Set project dates first'}
+                </p>
               )}
             </div>
           )}
 
-          {/* SCHEDULE TAB */}
+          {/* ── SCHEDULE TAB ── */}
           {activeTab === 'schedule' && (
-            <div className="space-y-6">
+            <div>
               {!generatedSchedule ? (
-                <div className="text-center py-12 text-slate-600">
-                  <Download className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                  <p className="font-bold uppercase tracking-wider">No schedule generated</p>
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--g500)' }}>
+                  <Download size={40} style={{ margin: '0 auto 12px', opacity: 0.3, display: 'block' }} />
+                  <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '12px' }}>No schedule generated</p>
                 </div>
               ) : (
                 <>
                   {scheduleAlerts.length > 0 && (
-                    <div className="p-3 bg-pink-500/10 border border-pink-500 text-pink-500 font-bold text-[10px] uppercase space-y-1.5">
+                    <div style={{
+                      padding: '12px 16px', background: 'var(--red-dim)', border: '1px solid var(--red-b)',
+                      borderRadius: '8px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}>
                       {scheduleAlerts.map((alert, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <AlertCircle size={14} className="shrink-0 mt-0.5" />
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', color: 'var(--red)', fontSize: '11px', fontWeight: 700 }}>
+                          <AlertCircle size={12} style={{ flexShrink: 0, marginTop: '1px' }} />
                           <span>{alert.message} ({getDateForDay(alert.day)})</span>
                         </div>
                       ))}
                     </div>
                   )}
-                  <div className="grid gap-4">
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {Object.entries(generatedSchedule).map(([day, data]) => (
-                      <div key={day} className="border border-cyan-500/30 bg-slate-900/80 p-4 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-500 to-cyan-500"></div>
-                        <h4 className="font-black text-xl text-white mb-4 tracking-widest uppercase flex items-center gap-3">
-                          {getDateForDay(parseInt(day))}<div className="h-px flex-1 bg-slate-800"></div>
-                        </h4>
-                        <div className="space-y-3">
-                          {data.shifts.map((shift, i) => (
-                            <div key={i} className="bg-slate-950 border border-slate-800 p-3">
-                              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
-                                <div className="flex items-center gap-3">
-                                  <div className="p-1.5 bg-slate-900 border border-slate-700"><Clock className="w-4 h-4 text-cyan-400" /></div>
-                                  <div>
-                                    <span className="font-black text-lg text-white block">{formatTime(shift.startHour)} - {formatTime(shift.endHour % 24)}</span>
-                                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
-                                      <span>{shift.hours.length}H</span>
-                                      {shift.endDay > shift.startDay && <span className="text-pink-500 animate-pulse">OVERNIGHT</span>}
+                      <div key={day} className="section" style={{ borderLeft: '3px solid var(--lime)' }}>
+                        <div className="section-head">
+                          <div className="section-title">{getDateForDay(parseInt(day))}</div>
+                          <div className="brand-bar">
+                            <div className="bb1" /><div className="bb2" /><div className="bb3" />
+                          </div>
+                        </div>
+                        <div className="section-body">
+                          {data.shifts.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '16px', color: 'var(--g500)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', border: '1px dashed var(--border)', borderRadius: '6px' }}>
+                              NO OPS
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              {data.shifts.map((shift, i) => (
+                                <div key={i} style={{ background: 'var(--g700)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                      <Clock size={14} style={{ color: 'var(--lime)', flexShrink: 0 }} />
+                                      <div>
+                                        <div style={{ fontWeight: 800, fontSize: '14px' }}>
+                                          {formatTime(shift.startHour)} – {formatTime(shift.endHour % 24)}
+                                        </div>
+                                        <div style={{ fontSize: '10px', color: 'var(--g400)', fontWeight: 600, textTransform: 'uppercase', marginTop: '2px' }}>
+                                          {shift.hours.length}H
+                                          {shift.endDay > shift.startDay && (
+                                            <span style={{ color: 'var(--orange)', marginLeft: '6px' }}>OVERNIGHT</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '6px' }}>
+                                      {shift.hours.some(h => getHourCategory(h.hour) === 'hard') && (
+                                        <span className="pill pill-red">Extreme</span>
+                                      )}
+                                      {shift.hours.some(h => getHourCategory(h.hour) === 'prime') && (
+                                        <span className="pill pill-lime">Prime</span>
+                                      )}
                                     </div>
                                   </div>
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                    {shift.assignedDetails.map((d, idx) => (
+                                      <span
+                                        key={idx}
+                                        className={`pill ${
+                                          d.startsWith('⭐') ? 'pill-lime'
+                                          : d.startsWith('⚠️') ? 'pill-orange'
+                                          : 'pill-gray'
+                                        }`}
+                                      >
+                                        {d}
+                                      </span>
+                                    ))}
+                                  </div>
                                 </div>
-                                <div className="flex gap-1.5">
-                                  {shift.hours.some(h => getHourCategory(h.hour) === 'hard') && <span className="text-[9px] bg-pink-900/50 text-pink-300 px-2 py-0.5 border border-pink-500/30 uppercase">Extreme</span>}
-                                  {shift.hours.some(h => getHourCategory(h.hour) === 'prime') && <span className="text-[9px] bg-cyan-900/50 text-cyan-300 px-2 py-0.5 border border-cyan-500/30 uppercase">Prime</span>}
-                                </div>
-                              </div>
-                              <div className="flex flex-wrap gap-1.5">
-                                {shift.assignedDetails.map((d, idx) => (
-                                  <span key={idx} className="inline-block bg-cyan-900/20 text-cyan-300 px-2 py-1 text-xs font-bold border border-cyan-500/30 uppercase">{d}</span>
-                                ))}
-                              </div>
+                              ))}
                             </div>
-                          ))}
-                          {data.shifts.length === 0 && <div className="text-slate-600 font-bold uppercase text-center py-4 border border-dashed border-slate-800 text-xs">NO OPS</div>}
+                          )}
                         </div>
                       </div>
                     ))}
@@ -800,6 +924,7 @@ export default function ScheduleAutomation() {
               )}
             </div>
           )}
+
         </div>
       </div>
     </div>
